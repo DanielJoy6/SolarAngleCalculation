@@ -33,7 +33,7 @@ with col1:
         value=0,
     )
 with col2:
-    st.write("Specific Day:")
+    st.write("Date Range:")
     Year = st.number_input(
         label="Year",
         min_value=0,
@@ -65,7 +65,7 @@ with col2:
         value=10,
     )
 with col3:
-    st.write("Overheat Range:")
+    st.write("Time Range:")
     StartHour = st.number_input(
         label="Start Hour",
         min_value=1,
@@ -226,7 +226,7 @@ def CalculateOverheating(solar, previous_altitude, minimum_altitude, maximum_alt
     return results
 
 
-def calculate():
+def calculate(show_intermediate):
     # Converted to Excel-compatible values
     Calculation_E16 = (StartTime.hour + StartTime.minute / 60) / 24
     Calculation_E17 = (EndTime.hour + EndTime.minute / 60) / 24
@@ -253,7 +253,7 @@ def calculate():
     MinimumAltitude = min(altitudes.values())
     MaximumAltitude = max(altitudes.values())
 
-    '''
+    _ = '''
     # Calculate overheat for the selected date/time.
     dt = datetime(Year, Month, Day, Hour, Minute)
     solar = CalculateSolarPosition(Year, Month, Day, Hour, Minute, Latitude, Longitude, Timezone)
@@ -296,7 +296,7 @@ def calculate():
         st.write("Year:", Year)
 
         #Single day - save for mobile app
-        '''
+        _ = '''
         st.write("Month:", Month)
         st.write("Day:", Day)
         st.write("Hour:", Hour)
@@ -319,7 +319,7 @@ def calculate():
         st.write("FinAzimuth:", FinAzimuth)
 
         #Single day - save for mobile app
-        '''
+        _ = '''
         st.markdown("### DATE / TIME ###")
         st.write("Date:", solar["Date"])
         st.write("Time:", solar["Time"])
@@ -399,14 +399,14 @@ def calculate():
     st.write("Vertical Shading element angle to wall:", vse)
 
     #Single day - save for mobile app
-    '''
+    _ = '''
     st.write("Vertical Shading element:", overheat["HSAofBuildingFacade"])
     st.write("Horizontal Shading element:", overheat["VSAofBuildingFacade"])
     st.write("Vertical Shading element angle to wall:", overheat["FinHSA"])
     '''
 
+show_intermediate = st.checkbox("Show intermediate calculations")
 if st.button("Calculate"):
     StartTime = time(StartHour, StartMinute)
     EndTime = time(EndHour, EndMinute)
-    calculate()
-show_intermediate = st.checkbox("Show intermediate calculations")
+    calculate(show_intermediate)
