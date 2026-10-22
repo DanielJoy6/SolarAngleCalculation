@@ -25,6 +25,7 @@ with col1:
         max_value=500,
         value=0,
     )
+    st.write("UTC = 0, EST = -5")
     Timezone = st.number_input(
         label="Timezone",
         min_value=-12,
@@ -39,32 +40,6 @@ with col2:
         max_value=2030,
         value=2026,
     )
-    Month = st.number_input(
-        label="Month",
-        min_value=1,
-        max_value=12,
-        value=1,
-    )
-    Day = st.number_input(
-        label="Day",
-        min_value=1,
-        max_value=31,
-        value=1,
-    )
-    Hour = st.number_input(
-        label="Hour",
-        min_value=1,
-        max_value=12,
-        value=6,
-    )
-    Minute = st.number_input(
-        label="Minute",
-        min_value=0,
-        max_value=59,
-        value=30,
-    )
-with col3:
-    st.write("Overheat Range:")
     StartMonth = st.number_input(
         label="StartMonth",
         min_value=1,
@@ -89,6 +64,8 @@ with col3:
         max_value=31,
         value=10,
     )
+with col3:
+    st.write("Overheat Range:")
     StartHour = st.number_input(
         label="Start Hour",
         min_value=1,
@@ -276,6 +253,7 @@ def calculate():
     MinimumAltitude = min(altitudes.values())
     MaximumAltitude = max(altitudes.values())
 
+    '''
     # Calculate overheat for the selected date/time.
     dt = datetime(Year, Month, Day, Hour, Minute)
     solar = CalculateSolarPosition(Year, Month, Day, Hour, Minute, Latitude, Longitude, Timezone)
@@ -285,6 +263,7 @@ def calculate():
     previous_altitude = previous_solar["SolarAltitudeAngle"]
 
     overheat = CalculateOverheating(solar, previous_altitude, MinimumAltitude, MaximumAltitude, Calculation_E16, Calculation_E17, Calculation_E18, Calculation_E19, ReformattedWallAngle, FinAzimuth)
+    '''
 
     # Calculate statistics for the relevant date/time window.
     start_date = date(Year, StartMonth, StartDay)
@@ -310,85 +289,93 @@ def calculate():
         current += timedelta(minutes=30)
 
     # st.write All Variables
-    st.markdown("### INPUTS ###")
-    st.write("Latitude:", Latitude)
-    st.write("Longitude:", Longitude)
-    st.write("Year:", Year)
-    st.write("Month:", Month)
-    st.write("Day:", Day)
-    st.write("Hour:", Hour)
-    st.write("Minute:", Minute)
-    st.write("Timezone:", Timezone)
-    st.write("Local time:", dt.strftime("%I:%M %p"))
-    st.write("AngleFinfromSouth:", AngleFinfromSouth)
-    st.write("AngleFacadefromSouth:", AngleFacadefromSouth)
-    st.write("StartMonth:", StartMonth)
-    st.write("StartDay:", StartDay)
-    st.write("EndMonth:", EndMonth)
-    st.write("EndDay:", EndDay)
-    st.write("StartTime:", StartTime)
-    st.write("EndTime:", EndTime)
+    if show_intermediate:
+        st.markdown("### INPUTS ###")
+        st.write("Latitude:", Latitude)
+        st.write("Longitude:", Longitude)
+        st.write("Year:", Year)
 
-    st.markdown("### BUILDING ORIENTATION ###")
-    st.write("ReformattedWallAngle:", ReformattedWallAngle)
-    st.write("ReformattedFinAngle:", ReformattedFinAngle)
-    st.write("FinAzimuth:", FinAzimuth)
+        #Single day - save for mobile app
+        '''
+        st.write("Month:", Month)
+        st.write("Day:", Day)
+        st.write("Hour:", Hour)
+        st.write("Minute:", Minute)
+        '''
 
-    st.markdown("### DATE / TIME ###")
-    st.write("Date:", solar["Date"])
-    st.write("Time:", solar["Time"])
-    st.write("JulianDay:", solar["JulianDay"])
-    st.write("JulianCentury:", solar["JulianCentury"])
+        st.write("Timezone:", Timezone)
+        st.write("AngleFinfromSouth:", AngleFinfromSouth)
+        st.write("AngleFacadefromSouth:", AngleFacadefromSouth)
+        st.write("StartMonth:", StartMonth)
+        st.write("StartDay:", StartDay)
+        st.write("EndMonth:", EndMonth)
+        st.write("EndDay:", EndDay)
+        st.write("StartTime:", StartTime)
+        st.write("EndTime:", EndTime)
 
-    st.markdown("### INTERMEDIATE STUFF ###")
-    st.write("GeomMeanLongSun:", solar["GeomMeanLongSun"])
-    st.write("GeomMeanAnomSun:", solar["GeomMeanAnomSun"])
-    st.write("EccentEarthOrbit:", solar["EccentEarthOrbit"])
-    st.write("SunEqofCtr:", solar["SunEqofCtr"])
-    st.write("SunTrueLong:", solar["SunTrueLong"])
-    st.write("SunTrueAnom:", solar["SunTrueAnom"])
-    st.write("SunRadVector:", solar["SunRadVector"])
-    st.write("SunAppLong:", solar["SunAppLong"])
-    st.write("MeanObliqEcliptic:", solar["MeanObliqEcliptic"])
-    st.write("ObliqCorr:", solar["ObliqCorr"])
-    st.write("SunRtAscen:", solar["SunRtAscen"])
-    st.write("SunDeclin:", solar["SunDeclin"])
-    st.write("vary:", solar["vary"])
-    st.write("EqofTime:", solar["EqofTime"])
-    st.write("HASunrise:", solar["HASunrise"])
-    st.write("SolarNoon:", solar["SolarNoon"])
-    st.write("SunriseTime:", solar["SunriseTime"])
-    st.write("SunsetTime:", solar["SunsetTime"])
-    st.write("SunlightDuration:", solar["SunlightDuration"])
-    st.write("TrueSolarTime:", solar["TrueSolarTime"])
-    st.write("HourAngle:", solar["HourAngle"])
-    st.write("SolarZenithAngle:", solar["SolarZenithAngle"])
-    st.write("SolarAltitudeAngle:", solar["SolarAltitudeAngle"])
-    st.write("AppAtmosphericRefraction:", solar["AppAtmosphericRefraction"])
-    st.write("SolarElevationcorrected:", solar["SolarElevationcorrected"])
-    st.write("SolarAzimuthAngle:", solar["SolarAzimuthAngle"])
+        st.markdown("### BUILDING ORIENTATION ###")
+        st.write("ReformattedWallAngle:", ReformattedWallAngle)
+        st.write("ReformattedFinAngle:", ReformattedFinAngle)
+        st.write("FinAzimuth:", FinAzimuth)
 
-    st.markdown("### OVERHEATING ANALYSIS ###")
-    st.write("OverheatPeriodAnalysis:", overheat["OverheatPeriodAnalysis"])
-    st.write("HSAofBuildingFacade:", overheat["HSAofBuildingFacade"])
-    st.write("VSAofBuildingFacade:", overheat["VSAofBuildingFacade"])
-    st.write("FinHSA:", overheat["FinHSA"])
-    st.write("FinVSA:", overheat["FinVSA"])
+        #Single day - save for mobile app
+        '''
+        st.markdown("### DATE / TIME ###")
+        st.write("Date:", solar["Date"])
+        st.write("Time:", solar["Time"])
+        st.write("JulianDay:", solar["JulianDay"])
+        st.write("JulianCentury:", solar["JulianCentury"])
 
-    st.markdown("### RELEVANT RANGE ###")
-    st.write("Relevant timestamps:", len(relevant_altitudes))
-    st.write("HSA Overheat MAX:", np.max(HSAs))
-    st.write("HSA Overheat MIN:", np.min(HSAs))
-    st.write("HSA Overheat MEDIAN:", np.median(HSAs))
-    st.write("VSA Overheat MAX:", np.max(VSAs))
-    st.write("VSA Overheat MIN:", np.min(VSAs))
-    st.write("VSA Overheat MEDIAN:", np.median(VSAs))
-    st.write("FIN HSA Overheat MAX:", np.max(fHSAs))
-    st.write("FIN HSA Overheat MIN:", np.min(fHSAs))
-    st.write("FIN HSA Overheat MEDIAN:", np.median(fHSAs))
-    st.write("FIN VSA Overheat MAX:", np.max(fVSAs))
-    st.write("FIN VSA Overheat MIN:", np.min(fVSAs))
-    st.write("FIN VSA Overheat MEDIAN:", np.median(fVSAs))
+        st.markdown("### INTERMEDIATE STUFF ###")
+        st.write("GeomMeanLongSun:", solar["GeomMeanLongSun"])
+        st.write("GeomMeanAnomSun:", solar["GeomMeanAnomSun"])
+        st.write("EccentEarthOrbit:", solar["EccentEarthOrbit"])
+        st.write("SunEqofCtr:", solar["SunEqofCtr"])
+        st.write("SunTrueLong:", solar["SunTrueLong"])
+        st.write("SunTrueAnom:", solar["SunTrueAnom"])
+        st.write("SunRadVector:", solar["SunRadVector"])
+        st.write("SunAppLong:", solar["SunAppLong"])
+        st.write("MeanObliqEcliptic:", solar["MeanObliqEcliptic"])
+        st.write("ObliqCorr:", solar["ObliqCorr"])
+        st.write("SunRtAscen:", solar["SunRtAscen"])
+        st.write("SunDeclin:", solar["SunDeclin"])
+        st.write("vary:", solar["vary"])
+        st.write("EqofTime:", solar["EqofTime"])
+        st.write("HASunrise:", solar["HASunrise"])
+        st.write("SolarNoon:", solar["SolarNoon"])
+        st.write("SunriseTime:", solar["SunriseTime"])
+        st.write("SunsetTime:", solar["SunsetTime"])
+        st.write("SunlightDuration:", solar["SunlightDuration"])
+        st.write("TrueSolarTime:", solar["TrueSolarTime"])
+        st.write("HourAngle:", solar["HourAngle"])
+        st.write("SolarZenithAngle:", solar["SolarZenithAngle"])
+        st.write("SolarAltitudeAngle:", solar["SolarAltitudeAngle"])
+        st.write("AppAtmosphericRefraction:", solar["AppAtmosphericRefraction"])
+        st.write("SolarElevationcorrected:", solar["SolarElevationcorrected"])
+        st.write("SolarAzimuthAngle:", solar["SolarAzimuthAngle"])
+
+        st.markdown("### OVERHEATING ANALYSIS ###")
+        st.write("OverheatPeriodAnalysis:", overheat["OverheatPeriodAnalysis"])
+        st.write("HSAofBuildingFacade:", overheat["HSAofBuildingFacade"])
+        st.write("VSAofBuildingFacade:", overheat["VSAofBuildingFacade"])
+        st.write("FinHSA:", overheat["FinHSA"])
+        st.write("FinVSA:", overheat["FinVSA"])
+        '''
+
+        st.markdown("### RELEVANT RANGE ###")
+        st.write("Relevant timestamps:", len(relevant_altitudes))
+        st.write("HSA Overheat MAX:", np.max(HSAs))
+        st.write("HSA Overheat MIN:", np.min(HSAs))
+        st.write("HSA Overheat MEDIAN:", np.median(HSAs))
+        st.write("VSA Overheat MAX:", np.max(VSAs))
+        st.write("VSA Overheat MIN:", np.min(VSAs))
+        st.write("VSA Overheat MEDIAN:", np.median(VSAs))
+        st.write("FIN HSA Overheat MAX:", np.max(fHSAs))
+        st.write("FIN HSA Overheat MIN:", np.min(fHSAs))
+        st.write("FIN HSA Overheat MEDIAN:", np.median(fHSAs))
+        st.write("FIN VSA Overheat MAX:", np.max(fVSAs))
+        st.write("FIN VSA Overheat MIN:", np.min(fVSAs))
+        st.write("FIN VSA Overheat MEDIAN:", np.median(fVSAs))
 
     if HSAOverHeatPeriod == "max":
         vsep = np.max(HSAs)
@@ -411,11 +398,15 @@ def calculate():
     st.write("Horizontal Shading element perpendicular to wall:", hsep)
     st.write("Vertical Shading element angle to wall:", vse)
 
+    #Single day - save for mobile app
+    '''
     st.write("Vertical Shading element:", overheat["HSAofBuildingFacade"])
     st.write("Horizontal Shading element:", overheat["VSAofBuildingFacade"])
     st.write("Vertical Shading element angle to wall:", overheat["FinHSA"])
+    '''
 
 if st.button("Calculate"):
     StartTime = time(StartHour, StartMinute)
     EndTime = time(EndHour, EndMinute)
     calculate()
+show_intermediate = st.checkbox("Show intermediate calculations")
