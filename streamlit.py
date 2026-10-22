@@ -1,7 +1,9 @@
 import math
 from datetime import date, datetime, time, timedelta
 
+import folium
 import numpy as np
+from streamlit_folium import st_folium
 
 import streamlit as st
 
@@ -9,6 +11,11 @@ st.title("Johnny's Architecture Program")
 st.subheader("A simple calculator for outputting overheat HSA & VSA")
 
 st.write("Input your values below:")
+
+if "lattitude" not in st.session_state:
+    st.session_state.lat = 35.0  # Default initial latitude
+if "longitude" not in st.session_state:
+    st.session_state.lon = -83.0  # Default initial longitude
 
 col1, col2, col3 = st.columns(3)
 with col1:
