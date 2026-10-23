@@ -446,7 +446,7 @@ def calculate(show_intermediate):
     df = pd.DataFrame(data, columns=["", 
         "Selected HSA for Vertical Shading", 
         "Selected VSA for Horizontal Shading",
-        "Selected VSA for Horizontal Shading",
+        "Selected Fin HSA for Horizontal Shading",
     ])
     st.table(df)
 
