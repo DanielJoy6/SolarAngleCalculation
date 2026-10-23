@@ -12,14 +12,17 @@ st.subheader("A simple calculator for outputting overheat HSA & VSA")
 
 st.write("Input your values below:")
 
-if "lattitude" not in st.session_state:
-    st.session_state.lat = 35.0  # Default initial latitude
+if "latitude" not in st.session_state:
+    st.session_state.latitude = 35.0  # Default initial latitude
 if "longitude" not in st.session_state:
-    st.session_state.lon = -83.0  # Default initial longitude
+    st.session_state.longitude = -83.0  # Default initial longitude
 
 col1, col2, col3 = st.columns(3)
 with col1:
     st.write("Location")
+
+    #Disabling manually entering latitude/longitude now that map is working
+    _ = '''
     Latitude = st.number_input(
         label="Latitude",
         min_value=0,
@@ -32,6 +35,7 @@ with col1:
         max_value=500,
         value=0,
     )
+    '''
     st.write("UTC = 0, EST = -5")
     Timezone = st.number_input(
         label="Timezone",
@@ -39,6 +43,35 @@ with col1:
         max_value=12,
         value=0,
     )
+
+    m = folium.Map(
+        location=[st.session_state.latitude, st.session_state.longitude],
+        zoom_start=10,
+    )
+    folium.Marker(
+        [st.session_state.latitude, st.session_state.longitude],
+        tooltip="Selected Location"
+    ).add_to(m)
+
+    map_data = st_folium(
+        m,
+        height=400,
+        width=700,
+        key="location_map"
+    )
+
+    # Update coordinates when the user clicks
+    if map_data and map_data["last_clicked"]:
+        latitude = map_data["last_clicked"]["lat"]
+        longitude = map_data["last_clicked"]["lng"]
+
+        if (
+            latitude != st.session_state.latitude
+            or longitude != st.session_state.longitude
+        ):
+            st.session_state.latitude = latitude
+            st.session_state.longitude = longitude
+            st.rerun()
 with col2:
     st.write("Date Range:")
     Year = st.number_input(
@@ -414,6 +447,8 @@ def calculate(show_intermediate):
 
 show_intermediate = st.checkbox("Show intermediate calculations")
 if st.button("Calculate"):
+    Latitude = st.session_state.latitude
+    Longitude = st.session_state.longitude
     StartTime = time(StartHour, StartMinute)
     EndTime = time(EndHour, EndMinute)
     calculate(show_intermediate)
