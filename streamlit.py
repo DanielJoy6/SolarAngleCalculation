@@ -76,41 +76,15 @@ with col1:
             st.rerun()
 with col2:
     st.write("Date Range:")
-    Year = st.number_input(
-        label="Year",
-        min_value=1,
-        max_value=9998,
-        value=2026,
-    )
-    StartMonth = st.number_input(
-        label="StartMonth",
-        min_value=1,
-        max_value=12,
-        value=1,
-    )
-    EndMonth = st.number_input(
-        label="EndMonth",
-        min_value=1,
-        max_value=12,
-        value=12,
-    )
-    StartDay = st.number_input(
-        label="StartDay",
-        min_value=1,
-        max_value=31,
-        value=1,
-    )
-    EndDay = st.number_input(
-        label="EndDay",
-        min_value=1,
-        max_value=31,
-        value=31,
-    )
-with col3:
-    st.write("Time Range:")
+
+    StartDate = st.date_input("Start Date", value=date(2026, 1, 1))
+    EndDate = st.date_input("End Date", value=date(2026, 12, 31))
 
     StartTime = st.time_input("Start Time", value=time(1, 0))
     EndTime = st.time_input("End Time", value=time(23, 59))
+
+with col3:
+    st.write("Overheat Options:")
 
     HSAOverHeatPeriod = st.selectbox(
         label="Choose an HSA analysis type:",
@@ -480,6 +454,11 @@ if show_multiple_windows:
 
 show_intermediate = st.checkbox("Show intermediate calculations")
 if st.button("Calculate"):
+    Year = StartDate.year
+    StartMonth = StartDate.month
+    StartDay = StartDate.day
+    EndMonth = EndDate.month
+    EndDay = EndDate.day
     Latitude = st.session_state.latitude
     Longitude = st.session_state.longitude
     Timezone = round(Longitude / 15) + 1 # approximate
