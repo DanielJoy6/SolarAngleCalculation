@@ -3,6 +3,7 @@ from datetime import date, datetime, time, timedelta
 
 import folium
 import numpy as np
+import pandas as pd
 from streamlit_folium import st_folium
 
 import streamlit as st
@@ -434,9 +435,16 @@ def calculate(show_intermediate):
         hsep = np.min(VSAs)
 
     st.markdown("### SHADING DESIGN RESULTS ###")
-    st.write("Vertical Shading element perpendicular to wall:", vsep)
-    st.write("Horizontal Shading element perpendicular to wall:", hsep)
-    st.write("Vertical Shading element angle to wall:", vse)
+
+    data = [
+        ["Angle of Solar (radians):", vsep, hsep, vse]
+    ]
+    df = pd.DataFrame(data, columns=["", 
+        "VERTICAL SHADING ELEMENT PERPENDICULAR TO WALL", 
+        "HORIZONTAL SHADING ELEMENT PERPENDICULAR TO WALL",
+        "VERTICAL SHADE ELEMENT ANGLE TO WALL",
+    ])
+    st.table(df)
 
     #Single day - save for mobile app
     _ = '''
