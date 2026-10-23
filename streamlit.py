@@ -119,11 +119,18 @@ with col3:
         label="Choose a VSA analysis type:",
         options=["max", "median", "min"]
     )
-
-# Overheat period day & times
-
-AngleFinfromSouth = 0
-AngleFacadefromSouth = 0
+    AngleFinfromSouth = st.number_input(
+        label="AngleFinfromSouth",
+        min_value=0,
+        max_value=180,
+        value=0,
+    )
+    AngleFacadefromSouth = st.number_input(
+        label="AngleFacadefromSouth",
+        min_value=0,
+        max_value=180,
+        value=0,
+    )
 
 # Calculations
 def CalculateSolarPosition(Year, Month, Day, Hour, Minute, Latitude, Longitude, Timezone):
@@ -437,9 +444,9 @@ def calculate(show_intermediate):
         ["Angle of Solar (degrees):", vsep, hsep, vse]
     ]
     df = pd.DataFrame(data, columns=["", 
-        "VERTICAL SHADING ELEMENT PERPENDICULAR TO WALL", 
-        "HORIZONTAL SHADING ELEMENT PERPENDICULAR TO WALL",
-        "VERTICAL SHADE ELEMENT ANGLE TO WALL",
+        "Selected HSA for Vertical Shading", 
+        "Selected VSA for Horizontal Shading",
+        "Selected VSA for Horizontal Shading",
     ])
     st.table(df)
 
