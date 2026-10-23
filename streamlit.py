@@ -77,8 +77,8 @@ with col2:
     st.write("Date Range:")
     Year = st.number_input(
         label="Year",
-        min_value=0,
-        max_value=2030,
+        min_value=1,
+        max_value=9998,
         value=2026,
     )
     StartMonth = st.number_input(
@@ -107,30 +107,10 @@ with col2:
     )
 with col3:
     st.write("Time Range:")
-    StartHour = st.number_input(
-        label="Start Hour",
-        min_value=1,
-        max_value=12,
-        value=6,
-    )
-    EndHour = st.number_input(
-        label="End Hour",
-        min_value=1,
-        max_value=12,
-        value=7,
-    )
-    StartMinute = st.number_input(
-        label="Start Minute",
-        min_value=0,
-        max_value=59,
-        value=0,
-    )
-    EndMinute = st.number_input(
-        label="End Minute",
-        min_value=0,
-        max_value=59,
-        value=0,
-    )
+
+    StartTime = st.time_input("Start Time", value=time(6, 0))
+    EndTime = st.time_input("End Time", value=time(7, 0))
+
     HSAOverHeatPeriod = st.selectbox(
         label="Choose an HSA analysis type:",
         options=["max", "median", "min"]
@@ -268,6 +248,16 @@ def CalculateOverheating(solar, previous_altitude, minimum_altitude, maximum_alt
 
 
 def calculate(show_intermediate):
+    try:
+        start_date = date(Year, StartMonth, StartDay)
+        end_date = date(Year, EndMonth, EndDay)
+    except ValueError:
+        st.error("Invalid start or end date.")
+        return
+
+    if start_date > end_date:
+        st.error("The start date must be before the end date.")
+        return
     # Converted to Excel-compatible values
     Calculation_E16 = (StartTime.hour + StartTime.minute / 60) / 24
     Calculation_E17 = (EndTime.hour + EndTime.minute / 60) / 24
@@ -328,6 +318,13 @@ def calculate(show_intermediate):
                 VSAs.append(analysis["VSAofBuildingFacade"])
                 fVSAs.append(analysis["FinVSA"])
         current += timedelta(minutes=30)
+
+    if not HSAs or not VSAs or not fHSAs or not fVSAs:
+        st.warning(
+            "No valid solar positions found for the selected "
+            "date, time, and building orientation."
+        )
+        return
 
     # st.write All Variables
     if show_intermediate:
@@ -429,7 +426,7 @@ def calculate(show_intermediate):
         vse = np.min(fHSAs)
     if VSAOverHeatPeriod == "max":
         hsep = np.max(VSAs)
-    elif HSAOverHeatPeriod == "median":
+    elif VSAOverHeatPeriod == "median":
         hsep = np.median(VSAs)
     else:
         hsep = np.min(VSAs)
@@ -437,7 +434,7 @@ def calculate(show_intermediate):
     st.markdown("### SHADING DESIGN RESULTS ###")
 
     data = [
-        ["Angle of Solar (radians):", vsep, hsep, vse]
+        ["Angle of Solar (degrees):", vsep, hsep, vse]
     ]
     df = pd.DataFrame(data, columns=["", 
         "VERTICAL SHADING ELEMENT PERPENDICULAR TO WALL", 
@@ -457,6 +454,8 @@ show_intermediate = st.checkbox("Show intermediate calculations")
 if st.button("Calculate"):
     Latitude = st.session_state.latitude
     Longitude = st.session_state.longitude
-    StartTime = time(StartHour, StartMinute)
-    EndTime = time(EndHour, EndMinute)
+    StartHour = StartTime.hour
+    StartMinute = StartTime.minute
+    EndHour = EndTime.hour
+    EndMinute = EndTime.minute
     calculate(show_intermediate)
