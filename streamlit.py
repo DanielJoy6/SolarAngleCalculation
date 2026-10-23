@@ -36,7 +36,7 @@ with col1:
         max_value=500,
         value=0,
     )
-    '''
+    
     st.write("UTC = 0, EST = -5")
     Timezone = st.number_input(
         label="Timezone",
@@ -44,6 +44,7 @@ with col1:
         max_value=12,
         value=0,
     )
+    '''
 
     m = folium.Map(
         location=[st.session_state.latitude, st.session_state.longitude],
@@ -91,7 +92,7 @@ with col2:
         label="EndMonth",
         min_value=1,
         max_value=12,
-        value=1,
+        value=12,
     )
     StartDay = st.number_input(
         label="StartDay",
@@ -103,13 +104,13 @@ with col2:
         label="EndDay",
         min_value=1,
         max_value=31,
-        value=10,
+        value=31,
     )
 with col3:
     st.write("Time Range:")
 
-    StartTime = st.time_input("Start Time", value=time(6, 0))
-    EndTime = st.time_input("End Time", value=time(7, 0))
+    StartTime = st.time_input("Start Time", value=time(1, 0))
+    EndTime = st.time_input("End Time", value=time(23, 59))
 
     HSAOverHeatPeriod = st.selectbox(
         label="Choose an HSA analysis type:",
@@ -254,7 +255,7 @@ def CalculateOverheating(solar, previous_altitude, minimum_altitude, maximum_alt
     return results
 
 
-def calculate(show_intermediate):
+def calculate(show_intermediate, show_windows):
     try:
         start_date = date(Year, StartMonth, StartDay)
         end_date = date(Year, EndMonth, EndDay)
@@ -440,9 +441,15 @@ def calculate(show_intermediate):
 
     st.markdown("### SHADING DESIGN RESULTS ###")
 
-    data = [
-        ["Angle of Solar (degrees):", vsep, hsep, vse]
-    ]
+    if show_windows:
+        data = [
+            ["Angle of Solar (degrees):", vsep, hsep, vse],
+            ["Multiple windows:", Width/math.tan(vsep), Height/math.tan(hsep), vse]
+        ]
+    else:
+        data = [
+            ["Angle of Solar (degrees):", vsep, hsep, vse]
+        ]
     df = pd.DataFrame(data, columns=["", 
         "Selected HSA for Vertical Shading", 
         "Selected VSA for Horizontal Shading",
@@ -450,19 +457,34 @@ def calculate(show_intermediate):
     ])
     st.table(df)
 
-    #Single day - save for mobile app
-    _ = '''
-    st.write("Vertical Shading element:", overheat["HSAofBuildingFacade"])
-    st.write("Horizontal Shading element:", overheat["VSAofBuildingFacade"])
-    st.write("Vertical Shading element angle to wall:", overheat["FinHSA"])
-    '''
+
+
+
+show_multiple_windows = st.checkbox("Doing multiple windows?")
+if show_multiple_windows:
+    col4, col5 = st.columns(2)
+    with col4:
+        Height = st.number_input(
+            label="Height",
+            min_value=1,
+            max_value=12,
+            value=1,
+        )
+    with col5:
+        Width = st.number_input(
+            label="Width",
+            min_value=1,
+            max_value=12,
+            value=1,
+        )
 
 show_intermediate = st.checkbox("Show intermediate calculations")
 if st.button("Calculate"):
     Latitude = st.session_state.latitude
     Longitude = st.session_state.longitude
+    Timezone = round(Longitude / 15) + 1 # approximate
     StartHour = StartTime.hour
     StartMinute = StartTime.minute
     EndHour = EndTime.hour
     EndMinute = EndTime.minute
-    calculate(show_intermediate)
+    calculate(show_intermediate, show_multiple_windows)
