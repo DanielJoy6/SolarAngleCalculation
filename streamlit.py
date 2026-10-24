@@ -418,7 +418,7 @@ def calculate(show_intermediate, show_windows):
     if show_windows:
         data = [
             ["Angle of Solar (degrees):", vsep, hsep, vse],
-            ["Multiple windows:", Width/math.tan(vsep), Height/math.tan(hsep), vse]
+            ["Multiple windows:", abs(Width/math.tan(vsep)), abs(Height/math.tan(hsep)), ""]
         ]
     else:
         data = [
